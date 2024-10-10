@@ -8,7 +8,6 @@ public class Test {
     @RequestMapping("/test")
     public String test(){
         System.out.println("hello world");
-        System.out.println("hello world");
         return "hello world";
     }
 }
