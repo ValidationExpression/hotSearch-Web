@@ -1,6 +1,9 @@
 package com.haolan.hotsearchweb.service.user;
 
+import com.github.pagehelper.PageInfo;
 import com.haolan.hotsearchweb.model.UserDO;
+
+import java.util.List;
 
 public interface UserService {
 
@@ -11,4 +14,6 @@ public interface UserService {
     void userRegister(UserDO user);
 
 
+    //分页查询用户
+    PageInfo<UserDO> selectUserByPage(Integer pageSize, Integer pageNumber);
 }

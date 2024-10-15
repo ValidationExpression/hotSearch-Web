@@ -5,6 +5,14 @@ spring:
     username: root
     password: root
 
+# 分页插件
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+  params:
+    count: countSql
+
 mybatis:
   configuration:
     map-underscore-to-camel-case: true #开启驼峰命名和下划线命名的自动转换

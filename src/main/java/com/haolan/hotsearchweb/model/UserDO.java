@@ -25,9 +25,9 @@ public class UserDO {
     private String username;
 
     //用户的展示昵称
-    //@Pattern(regexp = "^\\S{1,10}$")
-    //@Size(max = 10, message = "用户昵称长度不能超过10个字符")
-    //private String nickname;
+    @Pattern(regexp = "^\\S{1,10}$")
+    @Size(max = 10, message = "用户昵称长度不能超过10个字符")
+    private String nickname;
 
     //用户的密码
     @NotBlank(message = "用户密码不能为空")
