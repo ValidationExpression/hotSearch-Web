@@ -61,6 +61,11 @@ public class UserController {
      */
     @PostMapping("/update")
     public Result update(@Valid @RequestBody UserDO user){
+        //判断用户是否存在
+        UserDO userName = userService.selectUserNameInfo(user.getUsername());
+        if(userName == null){
+            return Result.error("用户不存在");
+        }
         //修改用户信息
         int userId = userService.updateUser(user);
         return Result.success(userId);
