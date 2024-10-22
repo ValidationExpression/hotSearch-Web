@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.haolan.hotsearchweb.mapper.HotSearchMapper">
+    <select id="getBiliHot" parameterType="java.util.List" resultType="com.haolan.hotsearchweb.model.BiliBiliHotDO">
+        select bhi.aid aid,
+               bhi.hot_search_order hot_search_order,
+               bhi.hot_search_cover hot_search_cover,
+               bhi.create_time create_time,
+               bhi.ip_local ip_local,
+               bv.title title,
+               bv.video_coin video_coin,
+               bv.video_danmaku video_danmaku,
+               bv.video_favorite video_favorite,
+               bv.video_like video_like,
+               bv.video_reply video_reply,
+               bv.video_share video_share,
+               bv.video_view video_view,
+               bv.video_desc video_desc,
+               bv.duration duration,
+               bv.pubdate_time pubdate_time,
+               bv.ctime,
+               bv.video_url video_url,
+               bu.`name` name,
+               bu.face
+        from bilibili_hot_info bhi
+                 inner join bilibili_video bv on bhi.aid=bv.aid and bv.create_time between #{startTime} and #{endTime}
+                 inner join bilibili_user bu on bhi.mid=bu.mid
+        where bhi.create_time between #{startTime} and #{endTime};
+    </select>
+
+    <select id="getDouYinHot" parameterType="java.util.List" resultType="com.haolan.hotsearchweb.model.DouYinHotDO">
+        select group_id,
+               hot_search_order,
+               title,
+               publish_time,
+               hot_value,
+               hot_search_cover,
+               hot_url,
+               create_time
+        from douyin_hot_info where create_time between #{startTime} and #{endTime};
+    </select>
+
+    <select id="getWeiBoHot" parameterType="java.util.List" resultType="com.haolan.hotsearchweb.model.WeiBoHotDO">
+        select hot_search_order,
+               create_time,
+               title,
+               hot_value,
+               hot_url
+        FROM weibo_hot_info where create_time between #{startTime} and #{endTime};
+    </select>
+
+    <select id="getZhiHuHot" parameterType="java.util.List" resultType="com.haolan.hotsearchweb.model.ZhiHuHotDO">
+        select zid,
+               hot_search_order,
+               create_time,
+               title,
+               zh_type,
+               publish_time,
+               excerpt,
+               detail_text,
+               hot_search_cover,
+               hot_url
+        from zhihu_hot_info where create_time between #{startTime} and #{endTime};
+    </select>
+
+
+</mapper>
