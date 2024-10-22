@@ -7,20 +7,22 @@ import lombok.Data;
 @TableName("douyin_hot_info")
 public class DouYinHotDO {
 
+    // 热搜id
+    private String groupId;
     // 创建时间
-    private String create_time;
+    private String createTime;
     // 热搜标题
     private String title;
     // 发布时间
-    private String pubdate_time;
+    private String publishTime;
     // 热搜值
-    private Integer hot_value;
+    private Integer hotValue;
 
     // 热搜封面
-    private String hot_search_cover;
+    private String hotSearchCover;
     // 热搜排名
-    private Integer hot_serch_order;
+    private Integer hotSearchOrder;
     // 热搜链接
-    private String hot_url;
+    private String hotUrl;
 
 }

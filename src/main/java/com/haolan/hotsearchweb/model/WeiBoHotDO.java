@@ -8,14 +8,14 @@ import lombok.Data;
 public class WeiBoHotDO {
 
     // 创建时间
-    private String create_time;
+    private String createTime;
     // 热搜标题
     private String title;
     // 热搜值
-    private String hot_value;
+    private String hotValue;
 
     // 热搜排名
-    private Integer hot_serch_order;
+    private Integer hotSearchOrder;
     // 热搜链接
-    private String hot_url;
+    private String hotUrl;
 }

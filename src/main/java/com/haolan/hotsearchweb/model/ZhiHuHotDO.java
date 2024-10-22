@@ -6,23 +6,26 @@ import lombok.Data;
 @Data
 @TableName("zhihu_hot_info")
 public class ZhiHuHotDO {
+
+    // 主键
+    private String zid;
     // 创建时间
-    private String create_time;
+    private String createTime;
     // 标题
     private String title;
     // 类型
-    private String zh_type;
+    private String zhType;
     // 发布时间
-    private String publish_time;
+    private String publishTime;
     // 内容
     private String excerpt;
     // 热搜值
-    private String detail_text;
+    private String detailText;
     // 热搜封面
-    private String hot_search_cover;
+    private String hotSearchCover;
     // 热搜序号
-    private Integer hot_search_order;
+    private Integer hotSearchOrder;
     // 热搜链接
-    private String hot_url;
+    private String hotUrl;
 
 }
