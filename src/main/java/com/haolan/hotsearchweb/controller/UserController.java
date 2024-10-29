@@ -3,11 +3,16 @@ package com.haolan.hotsearchweb.controller;
 import com.haolan.hotsearchweb.model.Result;
 import com.haolan.hotsearchweb.model.UserDO;
 import com.haolan.hotsearchweb.service.user.UserService;
+import com.haolan.hotsearchweb.util.JwtUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import com.haolan.hotsearchweb.util.Md5Util;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -51,7 +56,14 @@ public class UserController {
         if (!userName.getPassword().equals(Md5Util.getMD5String(user.getPassword()))){
             return Result.error("密码错误，请重新输入！");
         }
-        return Result.success("登录成功...");
+
+        // 生成token，将登录的用户id和用户账号放到token中
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", userName.getId());
+        claims.put("username", userName.getUsername());
+        String token = JwtUtil.genToken(claims);
+
+        return Result.success(token);
     }
 
     /**
@@ -90,8 +102,16 @@ public class UserController {
      * @return
      */
     @GetMapping("/selectUserPage")
-    public Result selectUserByPage(@Param("pageSize") Integer pageSize,
+    // 注解说明：@RequestHeader(name = "Authorization") 获取请求头中的token。
+    // HttpServletResponse response：相应状态码。
+    public Result selectUserByPage(@RequestHeader(name = "Authorization") String token, HttpServletResponse response, @Param("pageSize") Integer pageSize,
                                    @Param("pageNumber") Integer pageNumber){
-        return Result.success(userService.selectUserByPage(pageSize, pageNumber));
+        try {
+            Map<String, Object> claims = JwtUtil.parseToken(token);
+            return Result.success(userService.selectUserByPage(pageSize, pageNumber));
+        }catch (Exception e){
+            response.setStatus(401);
+            return Result.error("用户未登录！");
+        }
     }
 }
