@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haolan.hotsearchweb.mapper.UserMapper;
 import com.haolan.hotsearchweb.model.UserDO;
+import com.haolan.hotsearchweb.model.UserInfoDO;
 import com.haolan.hotsearchweb.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,5 +80,14 @@ public class UserServiceImpl implements UserService{
     @Override
     public int deleteUser(String id) {
         return userMapper.deleteById(id);
+    }
+
+    /**
+     * 修改当前登录用户的基本信息
+     * @param user
+     */
+    @Override
+    public void update(UserDO user) {
+        userMapper.update(user);
     }
 }

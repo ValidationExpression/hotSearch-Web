@@ -2,9 +2,10 @@ package com.haolan.hotsearchweb.controller;
 
 import com.haolan.hotsearchweb.model.Result;
 import com.haolan.hotsearchweb.model.UserDO;
+import com.haolan.hotsearchweb.model.UserInfoDO;
 import com.haolan.hotsearchweb.service.user.UserService;
 import com.haolan.hotsearchweb.util.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
+import com.haolan.hotsearchweb.util.ThreadLocalUtil;
 import jakarta.validation.Valid;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,12 +47,16 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
-    public Result login(@Valid @RequestBody UserDO user){
+    public Result login(@Valid @RequestBody UserInfoDO user){
         //查询当前注册的用户是否存在
         UserDO userName = userService.selectUserNameInfo(user.getUsername());
         if(userName == null){
             return Result.error("用户名不存在");
         }
+        System.out.println("userName:"+userName.getUsername());
+        System.out.println("userName:"+userName.getPassword());
+        System.out.println("user:"+user.getUsername());
+        System.out.println("user:"+user.getPassword());
         //校验用户名和密码
         if (!userName.getPassword().equals(Md5Util.getMD5String(user.getPassword()))){
             return Result.error("密码错误，请重新输入！");
@@ -83,6 +88,20 @@ public class UserController {
         return Result.success(userId);
     }
 
+    /**
+     * 修改当前登录的用户信息
+     * @param user
+     */
+    @PostMapping("/updateUser")
+    public Result updateUser(@Valid @RequestBody UserDO user){
+        // 从ThreadLocal中获取用户信息
+        Map<String, Object> map = ThreadLocalUtil.get();
+        user.setId((Long) map.get("id"));
+        //修改用户信息
+        userService.update(user);
+        return Result.success("修改成功");
+    }
+
 
     /**
      * 删除用户
@@ -104,14 +123,22 @@ public class UserController {
     @GetMapping("/selectUserPage")
     // 注解说明：@RequestHeader(name = "Authorization") 获取请求头中的token。
     // HttpServletResponse response：相应状态码。
-    public Result selectUserByPage(@RequestHeader(name = "Authorization") String token, HttpServletResponse response, @Param("pageSize") Integer pageSize,
+    public Result selectUserByPage(@Param("pageSize") Integer pageSize,
                                    @Param("pageNumber") Integer pageNumber){
-        try {
-            Map<String, Object> claims = JwtUtil.parseToken(token);
-            return Result.success(userService.selectUserByPage(pageSize, pageNumber));
-        }catch (Exception e){
-            response.setStatus(401);
-            return Result.error("用户未登录！");
-        }
+        System.out.println("pageSize:"+pageSize);
+        return Result.success(userService.selectUserByPage(pageSize, pageNumber));
+
+    }
+
+    /**
+     * 获取用户信息
+     * @return
+     * 通过token获取用户信息
+     */
+    @GetMapping("/getUserInfo")
+    public Result<UserDO> getUserInfo(/**@RequestHeader(name = "Authorization") String token*/){
+        // 从ThreadLocal中获取用户信息
+        Map<String, Object> map = ThreadLocalUtil.get();
+        return Result.success(userService.selectUserNameInfo((String) map.get("username")));
     }
 }

@@ -2,6 +2,7 @@ package com.haolan.hotsearchweb.service.user;
 
 import com.github.pagehelper.PageInfo;
 import com.haolan.hotsearchweb.model.UserDO;
+import com.haolan.hotsearchweb.model.UserInfoDO;
 
 public interface UserService {
 
@@ -17,4 +18,6 @@ public interface UserService {
     int updateUser(UserDO user);
 
     int deleteUser(String id);
+
+    void update(UserDO user);
 }
