@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haolan.hotsearchweb.mapper.UserMapper;
 import com.haolan.hotsearchweb.model.UserDO;
-import com.haolan.hotsearchweb.model.UserInfoDO;
 import com.haolan.hotsearchweb.util.Md5Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,7 +86,18 @@ public class UserServiceImpl implements UserService{
      * @param user
      */
     @Override
-    public void update(UserDO user) {
-        userMapper.update(user);
+    public void updateUserInfo(UserDO user) {
+        userMapper.updateUserInfo(user);
+    }
+
+    /**
+     * 修改密码
+     * @param newPassword
+     */
+    @Override
+    public void updatePassword(Integer id ,String newPassword) {
+        // 将明文密码进行加密
+        newPassword = Md5Util.getMD5String(newPassword);
+        userMapper.updatePassword(id,newPassword);
     }
 }

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.URL;
 
 
 @Data
@@ -15,7 +16,7 @@ import org.hibernate.validator.constraints.Length;
 public class UserDO {
     //自动生成主键
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     //用户注册的账号
     @Pattern(regexp = "^[a-zA-Z][a-zA-Z0-9]{4,15}$")
@@ -36,7 +37,13 @@ public class UserDO {
     private int sex;
     private int age;
 
+    @URL
     private String user_pic;
     //状态
     private int status;
+
+    public String toString() {
+        return "UserDO [id=" + id + ", username=" + username + ", nickname=" + nickname + ", password=" + password
+                + ", sex=" + sex + ", age=" + age + ", user_pic=" + user_pic + ", status=" + status + "]";
+    }
 }

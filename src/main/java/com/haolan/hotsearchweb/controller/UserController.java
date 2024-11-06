@@ -2,7 +2,6 @@ package com.haolan.hotsearchweb.controller;
 
 import com.haolan.hotsearchweb.model.Result;
 import com.haolan.hotsearchweb.model.UserDO;
-import com.haolan.hotsearchweb.model.UserInfoDO;
 import com.haolan.hotsearchweb.service.user.UserService;
 import com.haolan.hotsearchweb.util.JwtUtil;
 import com.haolan.hotsearchweb.util.ThreadLocalUtil;
@@ -43,22 +42,17 @@ public class UserController {
 
     /**
      * 登录
-     * @param user
      * @return
      */
     @PostMapping("/login")
-    public Result login(@Valid @RequestBody UserInfoDO user){
+    public Result login(String username, String password){
         //查询当前注册的用户是否存在
-        UserDO userName = userService.selectUserNameInfo(user.getUsername());
+        UserDO userName = userService.selectUserNameInfo(username);
         if(userName == null){
             return Result.error("用户名不存在");
         }
-        System.out.println("userName:"+userName.getUsername());
-        System.out.println("userName:"+userName.getPassword());
-        System.out.println("user:"+user.getUsername());
-        System.out.println("user:"+user.getPassword());
         //校验用户名和密码
-        if (!userName.getPassword().equals(Md5Util.getMD5String(user.getPassword()))){
+        if (!userName.getPassword().equals(Md5Util.getMD5String(password))){
             return Result.error("密码错误，请重新输入！");
         }
 
@@ -89,17 +83,36 @@ public class UserController {
     }
 
     /**
-     * 修改当前登录的用户信息
+     * 修改当前登录的用户信息(也可以修改头像)
      * @param user
      */
     @PostMapping("/updateUser")
     public Result updateUser(@Valid @RequestBody UserDO user){
         // 从ThreadLocal中获取用户信息
         Map<String, Object> map = ThreadLocalUtil.get();
-        user.setId((Long) map.get("id"));
+        user.setId((Integer) map.get("id"));
         //修改用户信息
-        userService.update(user);
-        return Result.success("修改成功");
+        userService.updateUserInfo(user);
+        return Result.success();
+    }
+
+    /**
+     * 修改密码
+     */
+    @PatchMapping("/updatePassword")
+    public Result updatePassword(@RequestParam("oldPassword") String oldPassword,
+                                  @RequestParam("newPassword") String newPassword){
+        // 从ThreadLocal中获取用户信息
+        Map<String, Object> map = ThreadLocalUtil.get();
+        String username = (String) map.get("username");
+        //获取当前用户的密码
+        UserDO userDo = userService.selectUserNameInfo(username);
+        if(!userDo.getPassword().equals(Md5Util.getMD5String(oldPassword))){
+            return Result.error("旧密码错误");
+        }
+        // 调用mapper层进行密码修改
+        userService.updatePassword(userDo.getId(),newPassword);
+        return Result.success();
     }
 
 

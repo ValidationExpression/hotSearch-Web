@@ -11,7 +11,7 @@ import java.util.List;
 @Mapper
 public interface UserMapper extends BaseMapper<UserDO> {
     // 根据用户名查询用户信息
-    @Select("SELECT username,password FROM user WHERE username = #{username}")
+    @Select("SELECT * FROM user WHERE username = #{username}")
     UserDO selectUserNameInfo(String username);
 
 
@@ -22,5 +22,7 @@ public interface UserMapper extends BaseMapper<UserDO> {
     List<UserDO> selectUser();
 
 
-    void update(UserDO user);
+    void updateUserInfo(UserDO user);
+
+    void updatePassword(Integer id ,String newPassword);
 }

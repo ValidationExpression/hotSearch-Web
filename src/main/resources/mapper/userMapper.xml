@@ -6,7 +6,18 @@
         select * from user order by id
     </select>
 
-    <update id="update" parameterType="com.haolan.hotsearchweb.model.UserDO">
-        update user set nickname = #{nickname}, sex = #{sex}, age = #{age}, user_pic = #{user_pic} where id = #{id}
+    <update id="updateUserInfo" parameterType="com.haolan.hotsearchweb.model.UserDO">
+        update user
+        <set>
+            <if test="nickname != null">nickname = #{nickname},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="user_pic != null">user_pic = #{user_pic}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        update user set password = #{newPassword} where id = #{id}
     </update>
 </mapper>
