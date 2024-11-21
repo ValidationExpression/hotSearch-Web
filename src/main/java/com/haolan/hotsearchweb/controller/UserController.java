@@ -8,11 +8,14 @@ import com.haolan.hotsearchweb.util.ThreadLocalUtil;
 import jakarta.validation.Valid;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.*;
 import com.haolan.hotsearchweb.util.Md5Util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/user")
@@ -20,6 +23,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 注册
@@ -62,6 +68,10 @@ public class UserController {
         claims.put("username", userName.getUsername());
         String token = JwtUtil.genToken(claims);
 
+        //把token存储到redis中
+        ValueOperations<String, String> operations = stringRedisTemplate.opsForValue();
+        operations.set(token,token,1, TimeUnit.HOURS);
+
         return Result.success(token);
     }
 
@@ -101,7 +111,8 @@ public class UserController {
      */
     @PatchMapping("/updatePassword")
     public Result updatePassword(@RequestParam("oldPassword") String oldPassword,
-                                  @RequestParam("newPassword") String newPassword){
+                                  @RequestParam("newPassword") String newPassword,
+                                 @RequestHeader("Authorization") String token){
         // 从ThreadLocal中获取用户信息
         Map<String, Object> map = ThreadLocalUtil.get();
         String username = (String) map.get("username");
@@ -112,6 +123,9 @@ public class UserController {
         }
         // 调用mapper层进行密码修改
         userService.updatePassword(userDo.getId(),newPassword);
+
+        // 删除redis中的token
+        stringRedisTemplate.delete(token);
         return Result.success();
     }
 
